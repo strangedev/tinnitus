@@ -76,6 +76,8 @@ setup(
     # simple. Or you can use find_packages().
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
+    data_files=[('/usr/share/tinnitus', ['plugins/vlc_backend.py'])],
+
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
     #   py_modules=["my_module"],

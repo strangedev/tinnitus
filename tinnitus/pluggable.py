@@ -1,10 +1,7 @@
 import importlib.util
 import os
 import threading
-from pathlib import Path
 from typing import Callable, Any
-
-import tinnitus
 
 
 class Pluggable(object):
@@ -55,17 +52,16 @@ class Pluggable(object):
 
     def __find_plugins(self):
 
-        plugin_path = os.path.join(Path(os.path.join(*Path(tinnitus.__file__).parts[0:-2])).as_posix(), 'plugins')
+        plugin_path = "/usr/share/tinnitus"
 
-        for dirname in os.listdir(plugin_path):
-            absolute_path = os.path.join(plugin_path, dirname)
+        for filename in os.listdir(plugin_path):
+            absolute_path = os.path.join(plugin_path, filename)
+            name, ext = os.path.splitext(filename)
 
-            if '__init__.py' not in os.listdir(absolute_path):
+            if ext != '.py':
                 continue
 
-            path_to_init = os.path.join(absolute_path, '__init__.py')
-
-            spec = importlib.util.spec_from_file_location(dirname, path_to_init)
+            spec = importlib.util.spec_from_file_location(name, absolute_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
@@ -84,4 +80,4 @@ class Pluggable(object):
 
             if is_backend:
                 with self.__lock:
-                    self.__backends[dirname] = module
+                    self.__backends[name] = module

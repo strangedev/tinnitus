@@ -10,36 +10,43 @@ class Queue(object):
 
     def __init__(self): pass
 
-
     @property
     def current(self):
-        id = None
-        mrl = ""
-        backend = ""
-        with self.__lock:
-            id = self.__current
-            mrl = self.__items[id]["mrl"]
-            backend = self.__items[id]["backend"]
-        return id, mrl, backend
+        mrl = backend = None
 
+        with self.__lock:
+            resource_id = self.__current
+
+            if resource_id is not None:
+                mrl = self.__items[resource_id]["mrl"]
+                backend = self.__items[resource_id]["backend"]
+
+        return resource_id, mrl, backend
+
+    @property
+    def queue(self):
+        with self.__lock:
+            queue = self.__queue
+        return queue
 
     def add(self, resource_id: int, mrl: str, backend: str) -> None:
-
         with self.__lock:
             self.__queue.append(resource_id)
             self.__items[resource_id] = {"mrl": mrl, "backend": backend}
 
-
     def remove(self, resource_id: int) -> None:
-
         with self.__lock:
             if resource_id in self.__items.keys():
                 self.__queue.remove(resource_id)
                 del self.__items[resource_id]
 
+    def clear(self):
+        with self.__lock:
+            self.__items = dict({})
+            self.__queue = []
+            self.__current = None
 
     def next(self):
-
         with self.__lock:
             if self.__current is not None:
                 del self.__items[self.__current]
@@ -49,7 +56,6 @@ class Queue(object):
 
             else:
                 self.__current = None
-
 
     def put_back(self):
 

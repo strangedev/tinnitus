@@ -81,7 +81,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['rpyc'],
+    install_requires=['rpyc', 'python-vlc'],
 
     entry_points={
         'console_scripts': [

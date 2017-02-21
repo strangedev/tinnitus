@@ -33,3 +33,12 @@ You can then ``from tinnitus import remote`` and use the contextmanager to talk 
 ``print(r.status())``
 
 To use a different port than the default host or port, use ``tinnitus.configure(host, port)`` before using the remote.
+
+
+Pluggable backends
+^^^^^^^^^^^^^^^^^^
+Playback is handled by pluggable backends. The barebones version comes with a simple backend using vlc. It is both
+versatile and serves as an example for the plugin structure.
+
+If you want to create your own plugins, simply create a Python package within the *plugins* directory.
+The package name will serve as the backend name required by the remote.

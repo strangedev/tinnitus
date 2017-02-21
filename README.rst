@@ -16,35 +16,6 @@ Tinnitus is *thread-safe*, meaning it can be accessed by any number of remotes a
 
     Please report any bugs over at <https://github.com/strangedev/tinnitus/issues>
 
-Setup
-^^^^^
-Prerequisites: *git*, *pip* and *setuptools*
-
-Get tinnitus via *git*:
-
-.. code:: bash
-
-    git clone https://github.com/strangedev/tinnitus.git
-
-    cd tinnitus
-
-Optinal: Activate the *virtualenv* you want to install tinnitus to.
-
-.. code:: bash
-
-    virtualenv .tinnitus
-
-    . .tinnitus/bin/activate
-
-
-Install tinnitus using *pip* and *setuptools*:
-
-.. code:: bash
-
-    pip install -e .
-
-For a global installation (not using *virtualenv*), you'll most likely have to be *root*.
-
 Running the service
 ^^^^^^^^^^^^^^^^^^^
 After installing tinnitus, you can start the service with::

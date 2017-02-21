@@ -27,7 +27,7 @@ def configure(host=None, port=None):
 
 
 @contextmanager
-def tinnitus():
+def remote():
     global _host
     global _port
     c = rpyc.connect(_host, _port)

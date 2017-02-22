@@ -4,7 +4,7 @@ tinnitus
 :Info: See <https://github.com/strangedev/tinnitus>.
 :Author: Noah Hummel <strangedev@posteo.net>
 :Date: $Date: 2017-02-21 01:10:53 +0000 (Tue, 21 Feb 2017) $
-:Revision: $Revision: 1 $
+:Revision: $Revision: 2 $
 
 Tinnitus is a media player and playback queue.
 
@@ -102,18 +102,36 @@ Supported actions are:
 Pluggable backends
 ^^^^^^^^^^^^^^^^^^
 
-Playback is handled by pluggable backends.
+Playback is handled by pluggable backends. Plugins are Python scripts and can be located anywhere.
 
-Tinnitus by default comes with a simple backend using libvlc. It is both
-versatile and serves as an example for the plugin structure.
-
-Plugins are Python files, located in /usr/share/tinnitus.
+Tinnitus by default comes with a simple backend using libvlc. It is both versatile and serves as an example
+for the plugin structure.
 
 In order to create a plugin called ``my_backend``, follow these steps:
 
+If you haven't set up a plugin directory before or want to create a separate one:
+
+#. Create a plugin directory anywhere on your system, for example ``~/tinnitus_plugins/`` .
+#. Use the included ``tinnitus-include`` command to point tinnitusd to your directory:
+
 .. code:: bash
 
-    touch /usr/share/tinnitus/my_backend.py
+    tinnitus-include add ~/tinnitus_plugins
+
+You can use any number of plugin directories. To list all used plugin directories, use:
+
+.. code:: bash
+
+    tinnitus-include list
+
+To remove a plugin directory, for example ``~/tinnitus_plugins/``, from tinnitusd, use:
+
+.. code:: bash
+
+    tinnitus-include rem ~/tinnitus_plugins
+
+If you've created a plugin directory as described above, you can then create a file named ``my_backend.py``
+inside your plugin directory.
 
 Your plugin should expose the following methods, for it to be recognized by the service:
 

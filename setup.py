@@ -23,7 +23,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.1',
+    version='0.1.2',
 
     description='A pluggable playback queue service',
     long_description=long_description,
@@ -36,7 +36,7 @@ setup(
     author_email='strangedev@posteo.net',
 
     url="https://github.com/strangedev/tinnitus",
-    download_url="https://github.com/strangedev/tinnitus/tarball/0.1.1",
+    download_url="https://github.com/strangedev/tinnitus/tarball/0.1.2",
 
     # Choose your license
     license='MIT',
@@ -74,9 +74,11 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    # packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
-    data_files=[('/usr/share/tinnitus', ['plugins/vlc_backend.py'])],
+    packages=['tinnitus'],
+    package_dir={'tinnitus': 'tinnitus'},
+    package_data={'tinnitus': ['plugins/*.py', 'plugins/*.txt']},
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
@@ -91,6 +93,7 @@ setup(
     entry_points={
         'console_scripts': [
             'tinnitusd = tinnitus.server:run_command',
+            'tinnitus-include = tinnitus.pluggable:configure_include_paths',
         ],
     },
 

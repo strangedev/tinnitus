@@ -128,7 +128,10 @@ def run_command():
     port = 18861
 
     if argc > 2:
-        print("Usage...")
+        print("Usage:\n"
+              "\ttinnitusd [port] \t- Starts the tinntus service on port\n"
+              "\n"
+              "port is an optional parameter.")
         sys.exit(1)
 
     if argc > 1:

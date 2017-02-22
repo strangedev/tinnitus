@@ -3,6 +3,8 @@ import os
 import threading
 from typing import Callable, Any
 
+import sys
+
 
 class Pluggable(object):
 
@@ -52,32 +54,104 @@ class Pluggable(object):
 
     def __find_plugins(self):
 
-        plugin_path = "/usr/share/tinnitus"
+        plugin_path = os.path.join(os.path.dirname(__file__), 'plugins')
+        include_paths = [plugin_path]
 
-        for filename in os.listdir(plugin_path):
-            absolute_path = os.path.join(plugin_path, filename)
-            name, ext = os.path.splitext(filename)
+        with open(os.path.join(plugin_path, 'include.txt')) as f:
+            contents = f.read()
 
-            if ext != '.py':
-                continue
+        if contents is not None:
+            contents = contents.split("\n")
+            include_paths.extend([path for path in contents if path != ""])
 
-            spec = importlib.util.spec_from_file_location(name, absolute_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
+        for path in include_paths:
+            for filename in os.listdir(plugin_path):
 
-            is_backend = False
+                absolute_path = os.path.join(plugin_path, filename)
+                name, ext = os.path.splitext(filename)
 
+                if ext != '.py':
+                    continue
+
+                module = self.__import_relative(name, absolute_path)
+                if self.__is_plugin(module):
+                    with self.__lock:
+                        self.__backends[name] = module
+
+
+    def __import_relative(self, name, path_to_module):
+
+        spec = importlib.util.spec_from_file_location(name, path_to_module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        return module
+
+
+    def __is_plugin(self, module) -> bool:
+
+        return all([
+            hasattr(module, "set_mrl"), callable(getattr(module, "set_mrl")),
+            hasattr(module, "init"), callable(getattr(module, "init")),
+            hasattr(module, "play"), callable(getattr(module, "play")),
+            hasattr(module, "pause"), callable(getattr(module, "pause")),
+            hasattr(module, "stop"), callable(getattr(module, "stop"))])
+
+
+def configure_include_paths():
+
+    argc = len(sys.argv)
+    plugin_path = os.path.join(os.path.dirname(__file__), 'plugins')
+
+    if argc == 2:
+        if sys.argv[1] == "list":
+            contents = ""
+
+            with open(os.path.join(plugin_path, 'include.txt')) as f:
+                contents = ''.join([item + "\n" for item in f.read().split("\n") if item != ""])
+
+            print(contents)
+            sys.exit(0)
+
+    elif argc == 3:
+        if sys.argv[1] == "add":
             try:
-                is_backend = all([
-                    hasattr(module, "set_mrl"), callable(getattr(module, "set_mrl")),
-                    hasattr(module, "init"), callable(getattr(module, "init")),
-                    hasattr(module, "play"), callable(getattr(module, "play")),
-                    hasattr(module, "pause"), callable(getattr(module, "pause")),
-                    hasattr(module, "stop"), callable(getattr(module, "stop"))])
+                absolute_path = os.path.abspath(sys.argv[2])
+            except Exception as e:
+                print("Not a valid path!\n"
+                      " Check that the path {} exists.".format(sys.argv[2]))
+                sys.exit(1)
 
-            except Exception:
-                pass
+            with open(os.path.join(plugin_path, 'include.txt'), mode='a') as f:
+                f.write(absolute_path + "\n")
 
-            if is_backend:
-                with self.__lock:
-                    self.__backends[name] = module
+            sys.exit(0)
+
+        elif sys.argv[1] == "rem":
+            try:
+                absolute_path = os.path.abspath(sys.argv[2])
+            except Exception as e:
+                print("Not a valid path!\n"
+                      " Check that the path {} exists.".format(sys.argv[2]))
+                sys.exit(1)
+
+            contents = ""
+            with open(os.path.join(plugin_path, 'include.txt')) as f:
+                contents = f.read().split("\n")
+
+            contents.remove(absolute_path)
+            contents = ''.join([item + "\n" for item in contents])
+
+            with open(os.path.join(plugin_path, 'include.txt'), mode='w+') as f:
+                f.write(contents)
+            sys.exit(0)
+
+    print("Usage:\n"
+          "\ttinnitus-include [command] [options]\n"
+          "\n"
+          "Commands:\n"
+          "\tlist     \t- Lists all included plugin paths\n"
+          "\tadd PATH \t- Adds PATH to the included plugin paths\n"
+          "\trem PATH \t- Adds PATH to the included plugin paths\n"
+          "\n"
+          "PATH can be relative or absolute.")

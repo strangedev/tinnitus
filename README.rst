@@ -107,13 +107,13 @@ Playback is handled by pluggable backends.
 Tinnitus by default comes with a simple backend using libvlc. It is both
 versatile and serves as an example for the plugin structure.
 
-Plugins are Python files, located in /usr/share/pynitus.
+Plugins are Python files, located in /usr/share/tinnitus.
 
 In order to create a plugin called ``my_backend``, follow these steps:
 
 .. code:: bash
 
-    touch /usr/share/my_backend.py
+    touch /usr/share/tinnitus/my_backend.py
 
 Your plugin should expose the following methods, for it to be recognized by the service:
 

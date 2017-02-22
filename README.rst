@@ -4,7 +4,7 @@ tinnitus
 :Info: See <https://github.com/strangedev/tinnitus>.
 :Author: Noah Hummel <strangedev@posteo.net>
 :Date: $Date: 2017-02-21 01:10:53 +0000 (Tue, 21 Feb 2017) $
-:Revision: $Revision: 2 $
+:Revision: $Revision: 3 $
 
 .. image:: https://badge.fury.io/py/tinnitus.svg
     :target: https://badge.fury.io/py/tinnitus
@@ -101,6 +101,15 @@ Supported actions are:
 |                                          |                                                                           |
 |   r.status()                             | The Status enum is defined in ``tinnitus.Status``                         |
 +------------------------------------------+---------------------------------------------------------------------------+
+| .. code:: python                         | Returns a boolean indicating whether the resource specified by ``mrl``    |
+|                                          | is available for playback with the specified backend.                     |
+|                                          |                                                                           |
+|                                          | Note: This method does not indicate whether the backend is appropriate    |
+|   r.available(mrl, backend)              | for the resource.                                                         |
+|                                          |                                                                           |
+|                                          | Note: This feature is optional, the remote may return NotImplemented if   |
+|                                          | it is not supported by the backend.                                       |
++------------------------------------------+---------------------------------------------------------------------------+
 
 Pluggable backends
 ^^^^^^^^^^^^^^^^^^
@@ -176,4 +185,15 @@ Your plugin should expose the following methods, for it to be recognized by the 
 |                                          | Note: The method should be non-blocking.                                  |
 |                                          |                                                                           |
 |   stop()                                 |                                                                           |
++------------------------------------------+---------------------------------------------------------------------------+
+
+Your plugin may also optionally expose any of these methods, to support more remote features:
+
++------------------------------------------+---------------------------------------------------------------------------+
+| .. code:: python                         | Returns a boolean indicating whether the resource specified by ``mrl``    |
+|                                          | is available for playback. For example, if ``mrl`` points to a local      |
+|                                          | file, your plugin should check if the local file exits.                   |
+|                                          |                                                                           |
+|                                          | This feature is exposed as remote.available(). If your plugin doesn't     |
+|   available(mrl, backend)                | implement this method, the return value will default to NotImplemented.   |
 +------------------------------------------+---------------------------------------------------------------------------+

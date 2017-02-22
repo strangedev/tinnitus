@@ -6,6 +6,9 @@ tinnitus
 :Date: $Date: 2017-02-21 01:10:53 +0000 (Tue, 21 Feb 2017) $
 :Revision: $Revision: 2 $
 
+.. image:: https://badge.fury.io/py/tinnitus.svg
+    :target: https://badge.fury.io/py/tinnitus
+
 Tinnitus is a media player and playback queue.
 
 It comes in two parts, service and remote. Once the *tinnitusd* service is running, the Python remote can be used to

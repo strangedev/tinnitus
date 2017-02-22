@@ -11,6 +11,7 @@ from tinnitus.queue import Queue
 _status = Status.STOPPED  # type: Status
 _queue = Queue()  # type: Queue
 _pluggable = Pluggable()  # type: Pluggable
+_testing_pluggable = Pluggable()  # type: Pluggable
 _lock = threading.Lock()  # type: threading.Lock
 
 
@@ -33,6 +34,7 @@ def _play_next(*args, **kwargs):
 
 
 _pluggable.set_callback(_play_next)
+_testing_pluggable.set_callback(lambda *args, **kwargs: NotImplemented)
 
 
 class PlayerService(rpyc.Service):
@@ -120,6 +122,21 @@ class PlayerService(rpyc.Service):
             status = _status
 
         return status
+
+    def exposed_available(self, mrl: str, backend: str) -> bool:
+        global _lock
+        global _testing_pluggable
+
+        _testing_pluggable.use_backend(backend)
+        _testing_pluggable.backend.set_mrl(mrl)
+
+        if not hasattr(_testing_pluggable.backend, "available"):
+            return NotImplemented
+
+        if not callable(_testing_pluggable.backend.available):
+            return NotImplemented
+
+        return _testing_pluggable.backend.available()
 
 
 def run_command():

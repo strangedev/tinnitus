@@ -1,3 +1,4 @@
+import os
 from typing import Callable
 
 import vlc
@@ -6,6 +7,7 @@ import vlc
 vlc_instance = None
 player = None
 playback_end_callback = lambda: NotImplemented
+current_mrl = None
 
 
 def init(callback: Callable[[], None]) -> None:
@@ -25,7 +27,9 @@ def init(callback: Callable[[], None]) -> None:
 
 
 def set_mrl(mrl: str) -> None:
+    global current_mrl
 
+    current_mrl = mrl
     player.set_mrl(mrl)
 
 
@@ -44,3 +48,7 @@ def stop() -> None:
 
 def pause() -> None:
     player.pause()
+
+
+def available() -> bool:
+    return os.path.exists(current_mrl)

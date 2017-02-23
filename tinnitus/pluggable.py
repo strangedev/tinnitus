@@ -54,17 +54,17 @@ class Pluggable(object):
 
     def __find_plugins(self):
 
-        plugin_path = os.path.join(os.path.dirname(__file__), 'plugins')
-        include_paths = [plugin_path]
+        plugin_dir = os.path.join(os.path.dirname(__file__), 'plugins')
+        include_paths = [plugin_dir]
 
-        with open(os.path.join(plugin_path, 'include.txt')) as f:
+        with open(os.path.join(plugin_dir, 'include.txt')) as f:
             contents = f.read()
 
         if contents is not None:
             contents = contents.split("\n")
             include_paths.extend([path for path in contents if path != ""])
 
-        for path in include_paths:
+        for plugin_path in include_paths:
             for filename in os.listdir(plugin_path):
 
                 absolute_path = os.path.join(plugin_path, filename)

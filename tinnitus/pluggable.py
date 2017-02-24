@@ -65,18 +65,24 @@ class Pluggable(object):
             include_paths.extend([path for path in contents if path != ""])
 
         for plugin_path in include_paths:
-            for filename in os.listdir(plugin_path):
 
-                absolute_path = os.path.join(plugin_path, filename)
-                name, ext = os.path.splitext(filename)
+            try:
 
-                if ext != '.py':
-                    continue
+                for filename in os.listdir(plugin_path):
 
-                module = self.__import_relative(name, absolute_path)
-                if self.__is_plugin(module):
-                    with self.__lock:
-                        self.__backends[name] = module
+                    absolute_path = os.path.join(plugin_path, filename)
+                    name, ext = os.path.splitext(filename)
+
+                    if ext != '.py': continue
+
+                    try:
+                        module = self.__import_relative(name, absolute_path)
+                    except: continue
+
+                    if self.__is_plugin(module):
+                        with self.__lock: self.__backends[name] = module
+
+            except: continue
 
 
     def __import_relative(self, name, path_to_module):
